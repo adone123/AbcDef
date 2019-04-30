@@ -18,7 +18,10 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://jitpack.io'
+            credentials { name 'jp_gme734e8ddue4t9o6g7ckim9g0' }
+        }
         maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
 
         maven {

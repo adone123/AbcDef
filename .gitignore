@@ -7,3 +7,4 @@
 /captures
 .externalNativeBuild
 /packagelibrary/build
+ ./app/src/main/res/mipmap-xxhdp
