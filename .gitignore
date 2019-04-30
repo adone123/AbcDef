@@ -7,4 +7,5 @@
 /captures
 .externalNativeBuild
 /packagelibrary/build
-./app/src/main/res/mipmap-xxhdp
+./app/src/main/res/mipmap/icon.jgp
+./app/src/main/res/mipmap/icon.png
