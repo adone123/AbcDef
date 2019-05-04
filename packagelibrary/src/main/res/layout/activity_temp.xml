@@ -20,9 +20,9 @@
                 android:id="@+id/iv_logo"
                 android:layout_width="130dp"
                 android:layout_height="40dp"
-                android:scaleType="centerCrop"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"/>
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/tv_login"
@@ -59,13 +59,38 @@
 
         </RelativeLayout>
 
-        <com.lsh.XXRecyclerview.XXRecycleView
-            android:id="@+id/rv"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1">
 
-        </com.lsh.XXRecyclerview.XXRecycleView>
+            <com.lsh.XXRecyclerview.XXRecycleView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.lsh.XXRecyclerview.XXRecycleView>
+
+            <LinearLayout
+                android:id="@+id/rl_kf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/qq" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="客服" />
+            </LinearLayout>
+
+        </RelativeLayout>
 
         <com.gongwen.marqueen.SimpleMarqueeView
             android:id="@+id/simpleMarqueeView"

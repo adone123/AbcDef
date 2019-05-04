@@ -3,6 +3,8 @@ package com.lsh.packagelibrary;
 import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -75,5 +77,13 @@ public class DeviceUtils {
         return sb.toString();
     }
 
+
+
+    public static int getScreenWidth(Context context) {
+        WindowManager manager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        return display.getWidth();
+    }
 
 }

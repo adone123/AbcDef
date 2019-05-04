@@ -21,11 +21,12 @@
     <!-- 获取logcat日志 -->
     <application
         android:name=".MyApp"
-        android:allowBackup="true"
-        android:icon="@mipmap/icon"
+        android:icon="@mipmap/icon2"
+        android:roundIcon="@mipmap/icon2"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <!--<service android:name="cn.jpush.android.service.PushService"-->
         <!--android:process=":multiprocess"-->
         <!--tools:node="replace" >-->
@@ -33,7 +34,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -31,12 +31,12 @@ public class MainActivity extends TempActivity {
     @Override
     public int getAppId() {
 //        return Integer.parseInt(getResources().getString(R.string.app_id)); //自定义的APPID
-        return 1001; //自定义的APPID
+        return 9900001; //自定义的APPID
     }
 
     @Override
     public String getUrl() {
-        return "http://sz3.llcheng888.com/switch/api2/main_view_config";
+        return "http://38922dh.com/switch/api2/main_view_config";
     }
 
 }

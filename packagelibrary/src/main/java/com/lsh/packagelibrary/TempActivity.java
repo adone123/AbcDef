@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,12 +15,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -61,21 +65,21 @@ import okhttp3.OkHttpClient;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
-public abstract class TempActivity extends AppCompatActivity implements View.OnClickListener {
+public abstract class TempActivity extends AppCompatActivity implements View.OnClickListener, OnPopDismiss {
     private ImageView bg;
     private SpUtils mSpUtils;
-    private XXRecycleView mRv;
+    private XXRecycleView mRv, head_xxv;
     private View mHeader;
     private TextView mTv_login;
     private TextView mTv_register, mTv_announce, tv_xie;
     private LinearLayout mLl_chongzhi, mLl_tikuan, mLl_jilu, mLl_kefu, mLl_caipiao, mLl_zxkefu, mLl_huodong, mLl_kaijiang, mLl_zhongxin, ll_wanfa;
-    private CommonRecyclerAdapter<ResultBean.GameDataBean> mAdapter;
+    private CommonRecyclerAdapter<ResultBean.Game_dataEntity> mAdapter;
+    private CommonRecyclerAdapter<ResultBean.Game_data_newEntity> mhead_xxl_Adapter;
     private LinearLayout mActivity_view;
-    private TextView mTv_guanfang;
-    private TextView mTv_xinyong;
-    private View mV_left;
-    private View mV_right;
-    private ImageView iv_logo;
+    private ImageView iv_logo, iv_you;
+    private Banner banner;
+    private SimpleMarqueeView<String> marqueeView;
+    private LinearLayout rl_kf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,13 +99,11 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         bg = (ImageView) findViewById(R.id.bg);
         checkOpen("first");
         initRv();
+        initHeadXxv();
         PushAgent pushAgent = PushAgent.getInstance(this);
         pushAgent.onAppStart();
         pushAgent.setResourcePackageName(getRealPackageName());
         pushAgent.setPushCheck(true);
-//        initMarquee();
-//        initBanner();
-
     }
 
     protected abstract String getRealPackageName();
@@ -111,18 +113,16 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         mTv_login = (TextView) findViewById(R.id.tv_login);
         tv_xie = (TextView) findViewById(R.id.tv_xie);
         mTv_register = (TextView) findViewById(R.id.tv_register);
+        rl_kf = findViewById(R.id.rl_kf);
         mTv_announce = (TextView) mHeader.findViewById(R.id.tv_announce);
         mLl_chongzhi = (LinearLayout) mHeader.findViewById(R.id.ll_chongzhi);
         mLl_tikuan = (LinearLayout) mHeader.findViewById(R.id.ll_tikuan);
         mLl_jilu = (LinearLayout) mHeader.findViewById(R.id.ll_jilu);
         mLl_kefu = (LinearLayout) mHeader.findViewById(R.id.ll_kefu);
-        mTv_guanfang = (TextView) mHeader.findViewById(R.id.tv_guanfang);
-        mTv_xinyong = (TextView) mHeader.findViewById(R.id.tv_xinyong);
-        mV_left = mHeader.findViewById(R.id.v_left);
-        mV_right = mHeader.findViewById(R.id.v_right);
         ll_wanfa = (LinearLayout) mHeader.findViewById(R.id.ll_wanfa);
-
-
+        head_xxv = mHeader.findViewById(R.id.head_xxv);
+        iv_you = mHeader.findViewById(R.id.iv_you);
+        banner = mHeader.findViewById(R.id.banner);
         mLl_caipiao = (LinearLayout) findViewById(R.id.ll_caipiao);
         mLl_zxkefu = (LinearLayout) findViewById(R.id.ll_zxkefu);
         mLl_huodong = (LinearLayout) findViewById(R.id.ll_huodong);
@@ -130,71 +130,38 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         mLl_zhongxin = (LinearLayout) findViewById(R.id.ll_zhongxin);
         mActivity_view = (LinearLayout) findViewById(R.id.activity_view);
         iv_logo = (ImageView) findViewById(R.id.iv_logo);
-
+        marqueeView = (SimpleMarqueeView) findViewById(R.id.simpleMarqueeView);
         mTv_login.setOnClickListener(this);
         mTv_register.setOnClickListener(this);
-
         mLl_chongzhi.setOnClickListener(this);
         mLl_tikuan.setOnClickListener(this);
         mLl_jilu.setOnClickListener(this);
         mLl_kefu.setOnClickListener(this);
-
-
         mLl_caipiao.setOnClickListener(this);
         mLl_zxkefu.setOnClickListener(this);
         mLl_huodong.setOnClickListener(this);
         mLl_kaijiang.setOnClickListener(this);
         mLl_zhongxin.setOnClickListener(this);
 
-        mTv_guanfang.setOnClickListener(this);
-        mTv_xinyong.setOnClickListener(this);
 
     }
 
     @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.tv_login) {
-        } else if (i == R.id.tv_register) {
-        } else if (i == R.id.ll_caipiao) {
-
-        } else if (i == R.id.ll_zxkefu) {
-
-        } else if (i == R.id.ll_huodong) {
-
-        } else if (i == R.id.ll_kefu) {
-
-        } else if (i == R.id.ll_jilu) {
-
-        } else if (i == R.id.ll_tikuan) {
-
-        } else if (i == R.id.ll_chongzhi) {
-
-        } else if (i == R.id.ll_kaijiang) {
-
-        } else if (i == R.id.ll_zhongxin) {
-
-        } else if (i == R.id.tv_guanfang) {
-            mV_left.setVisibility(View.VISIBLE);
-            mV_right.setVisibility(View.INVISIBLE);
-            initGameData((List<ResultBean.GameDataBean>) v.getTag());
-            mRv.scrollToPosition(10);
-            return;
-        } else if (i == R.id.tv_xinyong) {
-            mV_left.setVisibility(View.INVISIBLE);
-            mV_right.setVisibility(View.VISIBLE);
-            initGameData((List<ResultBean.GameDataBean>) v.getTag());
-            mRv.scrollToPosition(10);
-            return;
+    public void onPopDis() {
+        if (!is_showNative) {
+            ViewModel.JumpToWebActivity(url, true, TempActivity.this, result);
         }
-        JumpToWebActivity((String) v.getTag(), false);
+    }
 
+    @Override
+    public void onClick(View v) {
+        ViewModel.JumpToWebActivity((String) v.getTag(), false, this, result);
     }
 
     private void initRv() {
-        mAdapter = new CommonRecyclerAdapter<ResultBean.GameDataBean>(this, null, R.layout.rv_lottery) {
+        mAdapter = new CommonRecyclerAdapter<ResultBean.Game_dataEntity>(this, null, R.layout.rv_lottery) {
             @Override
-            public void convert(CommonViewHolder commonViewHolder, ResultBean.GameDataBean lotteryTypeBean, int i, boolean b) {
+            public void convert(CommonViewHolder commonViewHolder, ResultBean.Game_dataEntity lotteryTypeBean, int i, boolean b) {
                 commonViewHolder.setText(R.id.tv_name, lotteryTypeBean.getName());
                 Picasso.with(TempActivity.this).load(lotteryTypeBean.getImg_url()).into((ImageView) commonViewHolder.getView(R.id.iv));
             }
@@ -204,42 +171,6 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         mRv.setAdapter(mAdapter);
     }
 
-    private void initBanner(final List<ResultBean.BannerDataBean> banner_data) {
-        Banner banner = mHeader.findViewById(R.id.banner);
-        banner.setImageLoader(new GlideImageLoader());
-        List<String> images = new ArrayList<>();
-        for (ResultBean.BannerDataBean banner_datum : banner_data) {
-            images.add(banner_datum.getImg_url());
-        }
-        banner.setImages(images);
-        banner.setOnBannerListener(new OnBannerListener() {
-            @Override
-            public void OnBannerClick(int position) {
-                String jump_url = banner_data.get(position).getJump_url();
-                if (!TextUtils.isEmpty(jump_url)) {
-                    JumpToWebActivity(jump_url, false);
-                }
-            }
-        });
-        banner.isAutoPlay(true);
-        banner.setDelayTime(1500);
-        //设置指示器位置（当banner模式中有指示器时）
-        banner.setIndicatorGravity(BannerConfig.CENTER);
-        //banner设置方法全部调用完毕时最后调用
-        banner.start();
-    }
-
-
-    public class GlideImageLoader extends ImageLoader {
-        @Override
-        public void displayImage(Context context, Object path, ImageView imageView) {
-
-            //Glide 加载图片简单用法
-            Picasso.with(context).load((String) path).into(imageView);
-
-        }
-
-    }
 
     public boolean isShowNativeView() {
         return true;
@@ -292,33 +223,26 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
             is_showNative = result.isShow_native_main();
             if (!is_showNative) return;
 
-            if (!TextUtils.isEmpty(result.getDownUrl())) {
-                installApk(result.getDownUrl(), null);
-            }
-
-            mTv_guanfang.setTag(result.getGame_data());
-            mTv_xinyong.setTag(result.getGame_data_two());
-//            if (!TextUtils.isEmpty(result.getSkip_urls())) {
-//                skipurls = result.getSkip_urls();
-//            }
-//            if (!TextUtils.isEmpty(result.getReferer())) {
-//                referer = result.getReferer();
-//            }
-            if (result.getGame_data_two() == null || result.getGame_data_two().size() == 0) {
+            ViewModel.ShowUpdate(result.getUpdate_data(), TempActivity.this, mSpUtils, this);
+            if (result.getGame_data_new() == null || result.getGame_data_new().size() == 0 || result.getGame_data_new().size() == 1) {
                 ll_wanfa.setVisibility(View.GONE);
+            } else {
+                ll_wanfa.setVisibility(View.VISIBLE);
             }
             Picasso.with(TempActivity.this).load(result.getIv_logo()).into(iv_logo);
-            initBanner(result.getBanner_data());
+            ViewModel.initBanner(result.getBanner_data(), TempActivity.this, banner, result);
             initCommonData(result.getCommon_data());
-            initGameData(result.getGame_data());
-            initMarquee(result.getMarque_data());
+            initheadXxlData(result.getGame_data_new());
+            ViewModel.initMarquee(result.getMarque_data(), TempActivity.this, marqueeView, getUrl());
+            initGameDataNew(result.getGame_data_new().get(0).getGame_data());
+            ViewModel.initqqkf(rl_kf, result.getKf_qq(), TempActivity.this);
             mTv_announce.setText(result.getAnnounce());
         } else {
             startJumpToNative();
         }
     }
 
-    private void initGameData(final List<ResultBean.GameDataBean> game_data) {
+    private void initGameDataNew(final List<ResultBean.Game_dataEntity> game_data) {
         if (game_data == null) {
             mAdapter.clear();
             return;
@@ -327,9 +251,17 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         mAdapter.setOnItemClickListener(new CommonRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(CommonViewHolder commonViewHolder, int i) {
-                JumpToWebActivity(game_data.get(i - mRv.getHeaderCount()).getJump_url(), false);
+                ViewModel.JumpToWebActivity(game_data.get(i - mRv.getHeaderCount()).getJump_url(), false, TempActivity.this, result);
             }
         });
+    }
+
+    private void initheadXxlData(final List<ResultBean.Game_data_newEntity> game_data) {
+        if (game_data == null) {
+            mhead_xxl_Adapter.clear();
+            return;
+        }
+        mhead_xxl_Adapter.replaceAll(game_data);
     }
 
     private void initCommonData(List<ResultBean.CommonDataBean> common_data) {
@@ -392,47 +324,22 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     }
 
 
-    private void JumpToWebActivity(String url, boolean finish) {
-        if (TextUtils.isEmpty(url)) return;
-        if (url.contains("jumptoout")) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            startActivity(intent);
-            return;
-        }
-        Intent intent = new Intent(this, WebTwoActivity.class);
-        intent.putExtra("aaurl", url);
-        intent.putExtra("skipurls", result.getSkip_urls());
-        if (!TextUtils.isEmpty(result.getReferer()))
-            intent.putExtra("referer", result.getReferer());
-        startActivity(intent);
-        if (finish) {
-            this.finish();
-        }
-    }
-
-
     public abstract Class<?> getTargetNativeClazz();
 
     public abstract int getAppId();
 
     public abstract String getUrl();
 
+    protected abstract String getUrl2();
 
     @SuppressLint("HandlerLeak")
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (!is_showNative && !TextUtils.isEmpty(result.getDownUrl())) {
-                installApk(result.getDownUrl(), new OnCancelListener() {
-                    @Override
-                    public void onCancel() {
-                        JumpToWebActivity(url, true);
-                    }
-                });
-            } else if (!is_showNative) {
-                JumpToWebActivity(url, true);
+
+            if (!is_showNative) {
+                ViewModel.ShowUpdate(result.getUpdate_data(), TempActivity.this, mSpUtils, TempActivity.this);
+//                ViewModel.JumpToWebActivity(url, true, TempActivity.this, result);
             } else {
                 StatusBarUtil.setStatusBarLightMode(TempActivity.this, getWindow(), getResources().getColor(R.color.red));
                 mActivity_view.setVisibility(View.VISIBLE);
@@ -441,108 +348,6 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         }
     };
 
-
-    public void installApk(String str, OnCancelListener o) {
-//        "下载地址&&提示语&&提示频率&&包名&&版本号";
-        String[] split = str.split("&&");
-        if (split.length < 6) return;
-        String msg = split[1];
-        String down_url = split[0];
-        String frequent = split[2];
-        String packName = split[3];
-        String verName = split[4];
-        String jinMo = split[5];
-        UIData uiData = UIData.create()
-                .setContent(msg)
-                .setDownloadUrl(down_url)
-                .setTitle("");
-        boolean isSilent;
-        if ("是".equals(jinMo)) {
-            isSilent = true;
-        } else {
-            isSilent = false;
-        }
-        String spKey = packName + verName;
-
-        //先判断包名  再判断版本号  再判断频率
-        if (getPackageName().equals(packName)) {
-            //本应用
-            if (verName.equals(FileUtils.getVersionName(this))) {
-                return;//版本号相同不更新
-            } else {
-
-            }
-        } else {
-            //非本应用
-            if (FileUtils.isApplicationAvilible(this, packName)) {
-                return;//已经有了
-            } else {
-                //放行
-            }
-        }
-        boolean forceUpdate = false;
-        if ("0".equals(frequent)) {
-            String time = mSpUtils.getString(spKey, "");
-            if (TextUtils.isEmpty(time)) {
-                //放行
-            } else {
-                return;
-            }
-        } else if ("-1".equals(frequent)) {
-            forceUpdate = true;
-        } else if ("-2".equals(frequent)) {
-            //放行
-        } else {
-            int frequent1 = Integer.parseInt(frequent);
-            String time = mSpUtils.getString(spKey, "");
-            if (TextUtils.isEmpty(time)) {
-                //放行
-            } else {
-                long times = Integer.parseInt(time);
-                long curTimes = SystemClock.currentThreadTimeMillis();
-                if (curTimes - times > frequent1 * 86400000) {
-                    //放行
-                } else {
-                    return;  //不放行
-                }
-            }
-
-        }
-        DownloadBuilder builder = AllenVersionChecker
-                .getInstance()
-                .downloadOnly(uiData);
-
-        if (forceUpdate) {
-            builder.setForceUpdateListener(new ForceUpdateListener() {
-                @Override
-                public void onShouldForceUpdate() {
-                    TempActivity.this.finish();
-                }
-            });
-        }
-
-        builder.setOnCancelListener(o);
-        builder.setSilentDownload(isSilent);
-        builder.executeMission(this);
-        mSpUtils.putString(spKey, SystemClock.currentThreadTimeMillis() + "");
-    }
-
-    //
-    private void initPre() {
-        CookieJarImpl cookieJar = new CookieJarImpl(new PersistentCookieStore(this.getApplicationContext()));
-        OkHttpClient okHttpClient = (new OkHttpClient.Builder()).cookieJar(cookieJar).build();
-        OkHttpUtils.initClient(okHttpClient);
-        UMConfigure.init(this, "5bf2d7f5b465f52bd00003b4", "umeng", 1, "be7304bb2ee49cfe2f2d7f043283d0fc");
-        PushAgent mPushAgent = PushAgent.getInstance(this);
-        mPushAgent.register(new IUmengRegisterCallback() {
-            public void onSuccess(String deviceToken) {
-            }
-
-            public void onFailure(String s, String s1) {
-            }
-        });
-//        UMConfigure.setLogEnabled(true);
-    }
 
     private void checkOpen(final String tag) {
 
@@ -573,6 +378,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 .addParams("order_id", id)
                 .addParams("origin_id", getAppId() + "")
                 .addParams("mac_id", mac_id)
+                .addParams("version", "v2")
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -599,30 +405,48 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 });
     }
 
+    private int postion = 0;
 
-    private void initMarquee(List<String> datas) {
-
-        SimpleMarqueeView<String> marqueeView = (SimpleMarqueeView) findViewById(R.id.simpleMarqueeView);
-        if (null == datas || datas.size() == 0) {
-            marqueeView.setVisibility(View.GONE);
-            return;
-        }
-        SimpleMF<String> marqueeFactory = new SimpleMF(this);
-        marqueeFactory.setData(datas);
-        marqueeView.setMarqueeFactory(marqueeFactory);
-        marqueeView.startFlipping();
-        marqueeView.setOnItemClickListener(new OnItemClickListener<TextView, String>() {
+    private void initHeadXxv() {
+        mhead_xxl_Adapter = new CommonRecyclerAdapter<ResultBean.Game_data_newEntity>(this, null, R.layout.rv_head_xxl) {
             @Override
-            public void onItemClickListener(TextView mView, String mData, int mPosition) {
-                Intent intent = new Intent(TempActivity.this, MarqueeActivity.class);
-                intent.putExtra("aurl", getUrl());
-                startActivity(intent);
+            public void convert(CommonViewHolder commonViewHolder, ResultBean.Game_data_newEntity game_data_newEntity, int i, boolean b) {
+                ViewGroup.LayoutParams layoutParams = commonViewHolder.getView(R.id.tv_name).getLayoutParams();
+                if (mhead_xxl_Adapter.getItemCount() <= 3) {
+                    iv_you.setVisibility(View.GONE);
+                    layoutParams.width = DeviceUtils.getScreenWidth(TempActivity.this) / mhead_xxl_Adapter.getItemCount();
+                } else {
+                    iv_you.setVisibility(View.VISIBLE);
+                    layoutParams.width = (DeviceUtils.getScreenWidth(TempActivity.this) / 3) - 3;
+                }
+                if (postion == i) {
+                    ((CheckBox) commonViewHolder.getItemView()).setChecked(true);
+                } else {
+                    ((CheckBox) commonViewHolder.getItemView()).setChecked(false);
+                }
+                commonViewHolder.getView(R.id.tv_name).setLayoutParams(layoutParams);
+                commonViewHolder.setText(R.id.tv_name, game_data_newEntity.getGame_name());
+            }
+        };
+        LinearLayoutManager manager = new LinearLayoutManager(TempActivity.this, LinearLayout.HORIZONTAL, false);
+        head_xxv.setLayoutManager(manager);
+        head_xxv.setAdapter(mhead_xxl_Adapter);
+        mhead_xxl_Adapter.setOnItemClickListener(new CommonRecyclerAdapter.OnItemClickListener() {
+
+            @Override
+            public void onItemClickListener(CommonViewHolder commonViewHolder, int i) {
+                for (int d = 0; d < head_xxv.getChildCount(); d++) {
+                    ((CheckBox) head_xxv.getChildAt(d)).setChecked(false);
+                }
+                postion = i;
+                ((CheckBox) commonViewHolder.getItemView()).setChecked(true);
+                mhead_xxl_Adapter.notifyDataSetChanged();
+                initGameDataNew(mhead_xxl_Adapter.getDatas().get(i).getGame_data());
+                mRv.scrollToPosition(10);
             }
         });
     }
 
-
-    protected abstract String getUrl2();
 
     public void startJumpToNative() {
         startActivity(new Intent(TempActivity.this, getTargetNativeClazz()));
