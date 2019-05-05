@@ -234,7 +234,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
             initCommonData(result.getCommon_data());
             initheadXxlData(result.getGame_data_new());
             ViewModel.initMarquee(result.getMarque_data(), TempActivity.this, marqueeView, getUrl());
-            initGameDataNew(result.getGame_data_new().get(0).getGame_data());
+            initGameDataNew(result.getGame_data_new(), 0);
             ViewModel.initqqkf(rl_kf, result.getKf_qq(), TempActivity.this);
             mTv_announce.setText(result.getAnnounce());
         } else {
@@ -242,8 +242,10 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private void initGameDataNew(final List<ResultBean.Game_dataEntity> game_data) {
-        if (game_data == null) {
+    private void initGameDataNew(final List<ResultBean.Game_data_newEntity> data, int index) {
+        if (data == null || data.size() == 0) return;
+        final List<ResultBean.Game_dataEntity> game_data = data.get(index).getGame_data();
+        if (game_data == null || game_data.size() == 0) {
             mAdapter.clear();
             return;
         }
@@ -257,7 +259,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     }
 
     private void initheadXxlData(final List<ResultBean.Game_data_newEntity> game_data) {
-        if (game_data == null) {
+        if (game_data == null || game_data.size() == 0) {
             mhead_xxl_Adapter.clear();
             return;
         }
@@ -339,7 +341,6 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
 
             if (!is_showNative) {
                 ViewModel.ShowUpdate(result.getUpdate_data(), TempActivity.this, mSpUtils, TempActivity.this);
-//                ViewModel.JumpToWebActivity(url, true, TempActivity.this, result);
             } else {
                 StatusBarUtil.setStatusBarLightMode(TempActivity.this, getWindow(), getResources().getColor(R.color.red));
                 mActivity_view.setVisibility(View.VISIBLE);
@@ -395,6 +396,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                         try {
                             handleResult(response, tag);
                         } catch (Exception e) {
+                            Log.e("aaaaa", "onResponse: e", e);
                             if (tag.equals("first")) {
                                 checkOpen("second");
                             } else {
@@ -441,7 +443,8 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 postion = i;
                 ((CheckBox) commonViewHolder.getItemView()).setChecked(true);
                 mhead_xxl_Adapter.notifyDataSetChanged();
-                initGameDataNew(mhead_xxl_Adapter.getDatas().get(i).getGame_data());
+
+                initGameDataNew(mhead_xxl_Adapter.getDatas(), i);
                 mRv.scrollToPosition(10);
             }
         });

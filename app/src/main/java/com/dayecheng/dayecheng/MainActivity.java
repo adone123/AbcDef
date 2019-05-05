@@ -31,7 +31,7 @@ public class MainActivity extends TempActivity {
     @Override
     public int getAppId() {
 //        return Integer.parseInt(getResources().getString(R.string.app_id)); //自定义的APPID
-        return 9900001; //自定义的APPID
+        return 990003; //自定义的APPID
     }
 
     @Override
