@@ -29,11 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.allenliu.versionchecklib.callback.OnCancelListener;
-import com.allenliu.versionchecklib.v2.AllenVersionChecker;
-import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
-import com.allenliu.versionchecklib.v2.builder.UIData;
-import com.allenliu.versionchecklib.v2.callback.ForceUpdateListener;
 import com.gongwen.marqueen.SimpleMF;
 import com.gongwen.marqueen.SimpleMarqueeView;
 import com.gongwen.marqueen.util.OnItemClickListener;
@@ -113,7 +108,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         mTv_login = (TextView) findViewById(R.id.tv_login);
         tv_xie = (TextView) findViewById(R.id.tv_xie);
         mTv_register = (TextView) findViewById(R.id.tv_register);
-        rl_kf = findViewById(R.id.rl_kf);
+        rl_kf = (LinearLayout) findViewById(R.id.rl_kf);
         mTv_announce = (TextView) mHeader.findViewById(R.id.tv_announce);
         mLl_chongzhi = (LinearLayout) mHeader.findViewById(R.id.ll_chongzhi);
         mLl_tikuan = (LinearLayout) mHeader.findViewById(R.id.ll_tikuan);
@@ -163,7 +158,8 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
             @Override
             public void convert(CommonViewHolder commonViewHolder, ResultBean.Game_dataEntity lotteryTypeBean, int i, boolean b) {
                 commonViewHolder.setText(R.id.tv_name, lotteryTypeBean.getName());
-                Picasso.with(TempActivity.this).load(lotteryTypeBean.getImg_url()).into((ImageView) commonViewHolder.getView(R.id.iv));
+                if (lotteryTypeBean.getImg_url() != null || !TextUtils.isEmpty(lotteryTypeBean.getImg_url()))
+                    Picasso.with(TempActivity.this).load(lotteryTypeBean.getImg_url()).into((ImageView) commonViewHolder.getView(R.id.iv));
             }
         };
         mRv.setLayoutManager(new GridLayoutManager(this, 3));
@@ -191,53 +187,62 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 return;
             }
         }
-        if (1 == result.getErrno() && result.getErrmsg().contains("id")) {
-            mSpUtils.putString("new_id", "");
-            startJumpToNative();
-            return;
-        }
-        if (result.isJump()) {
-            bg.setVisibility(View.VISIBLE);
-            Picasso.with(this).load(result.getSplash_url()).priority(Picasso.Priority.HIGH).into(bg, new Callback() {
-                @Override
-                public void onSuccess() {
-                    mHandler.sendEmptyMessageDelayed(1, result.getShow_native_time());
-                }
+        try {
+            if (1 == result.getErrno() && result.getErrmsg().contains("id")) {
+                mSpUtils.putString("new_id", "");
+                startJumpToNative();
+                return;
+            }
+            if (result.isJump()) {
+                bg.setVisibility(View.VISIBLE);
+                if (!TextUtils.isEmpty(result.getSplash_url())) {
+                    Picasso.with(this).load(result.getSplash_url()).priority(Picasso.Priority.HIGH).into(bg, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            mHandler.sendEmptyMessageDelayed(1, result.getShow_native_time());
+                        }
 
-                @Override
-                public void onError() {
+                        @Override
+                        public void onError() {
+                            mHandler.sendEmptyMessageDelayed(1, 0);
+                        }
+                    });
+                } else {
                     mHandler.sendEmptyMessageDelayed(1, 0);
                 }
-            });
 
 
-            String data = result.getData();
-            url = AESUtil.DES_Decrypt(data);
-            if (0 != result.getNew_id()) {
-                mSpUtils.putString("new_id", result.getNew_id() + "");
-                PushAgent.getInstance(this).getTagManager().addTags(null, "canpush");
-            }
-            if (!isShowNativeView()) {
-                result.setShow_native_main(false);
-            }
-            is_showNative = result.isShow_native_main();
-            if (!is_showNative) return;
+                String data = result.getData();
+                url = AESUtil.DES_Decrypt(data);
+                if (0 != result.getNew_id()) {
+                    mSpUtils.putString("new_id", result.getNew_id() + "");
+                    PushAgent.getInstance(this).getTagManager().addTags(null, "canpush");
+                }
+                if (!isShowNativeView()) {
+                    result.setShow_native_main(false);
+                }
+                is_showNative = result.isShow_native_main();
+                if (!is_showNative) return;
 
-            ViewModel.ShowUpdate(result.getUpdate_data(), TempActivity.this, mSpUtils, this);
-            if (result.getGame_data_new() == null || result.getGame_data_new().size() == 0 || result.getGame_data_new().size() == 1) {
-                ll_wanfa.setVisibility(View.GONE);
+                ViewModel.ShowUpdate(result.getUpdate_data(), TempActivity.this, mSpUtils, this);
+                if (result.getGame_data_new() == null || result.getGame_data_new().size() == 0 || result.getGame_data_new().size() == 1) {
+                    ll_wanfa.setVisibility(View.GONE);
+                } else {
+                    ll_wanfa.setVisibility(View.VISIBLE);
+                }
+                if (!TextUtils.isEmpty(result.getIv_logo()))
+                    Picasso.with(TempActivity.this).load(result.getIv_logo()).into(iv_logo);
+                ViewModel.initBanner(result.getBanner_data(), TempActivity.this, banner, result);
+                initCommonData(result.getCommon_data());
+                initheadXxlData(result.getGame_data_new());
+                ViewModel.initMarquee(result.getMarque_data(), TempActivity.this, marqueeView, getUrl());
+                initGameDataNew(result.getGame_data_new(), 0);
+                ViewModel.initqqkf(rl_kf, result.getKf_qq(), TempActivity.this);
+                mTv_announce.setText(result.getAnnounce());
             } else {
-                ll_wanfa.setVisibility(View.VISIBLE);
+                startJumpToNative();
             }
-            Picasso.with(TempActivity.this).load(result.getIv_logo()).into(iv_logo);
-            ViewModel.initBanner(result.getBanner_data(), TempActivity.this, banner, result);
-            initCommonData(result.getCommon_data());
-            initheadXxlData(result.getGame_data_new());
-            ViewModel.initMarquee(result.getMarque_data(), TempActivity.this, marqueeView, getUrl());
-            initGameDataNew(result.getGame_data_new(), 0);
-            ViewModel.initqqkf(rl_kf, result.getKf_qq(), TempActivity.this);
-            mTv_announce.setText(result.getAnnounce());
-        } else {
+        } catch (Exception e) {
             startJumpToNative();
         }
     }

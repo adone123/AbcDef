@@ -21,8 +21,9 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:layout_gravity="center_vertical"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_height="23dp"
                 android:gravity="center_vertical"
                 android:src="@drawable/horn" />
 
@@ -39,8 +40,8 @@
                 android:scrollbars="horizontal"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="我是公告"
-                android:textSize="13dp" />
+                android:text=""
+                android:textSize="18dp" />
         </LinearLayout>
 
         <View

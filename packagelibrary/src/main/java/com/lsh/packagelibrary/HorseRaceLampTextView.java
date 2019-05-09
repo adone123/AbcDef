@@ -10,7 +10,7 @@ import android.widget.TextView;
  * Description:
  * Date: 2018/6/18
  */
-public class HorseRaceLampTextView extends TextView {
+public class HorseRaceLampTextView extends android.support.v7.widget.AppCompatTextView {
     public HorseRaceLampTextView(Context context) {
         super(context);
     }

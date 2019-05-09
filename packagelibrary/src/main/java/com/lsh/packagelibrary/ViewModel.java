@@ -16,11 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.allenliu.versionchecklib.callback.OnCancelListener;
-import com.allenliu.versionchecklib.v2.AllenVersionChecker;
-import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
-import com.allenliu.versionchecklib.v2.builder.UIData;
-import com.allenliu.versionchecklib.v2.callback.ForceUpdateListener;
 import com.gongwen.marqueen.SimpleMF;
 import com.gongwen.marqueen.SimpleMarqueeView;
 import com.gongwen.marqueen.util.OnItemClickListener;
@@ -150,92 +145,92 @@ public class ViewModel {
         });
         mSpUtils.putString(spKey, SystemClock.currentThreadTimeMillis() + "");
     }
-
-
-    public static void installApk(String str, OnCancelListener o, String packagename, final TempActivity activity, SpUtils mSpUtils) {
-//        "下载地址&&提示语&&提示频率&&包名&&版本号";
-        String[] split = str.split("&&");
-        if (split.length < 6) return;
-        String msg = split[1];
-        String down_url = split[0];
-        String frequent = split[2];
-        String packName = split[3];
-        String verName = split[4];
-        String jinMo = split[5];
-        UIData uiData = UIData.create()
-                .setContent(msg)
-                .setDownloadUrl(down_url)
-                .setTitle("");
-        boolean isSilent;
-        if ("是".equals(jinMo)) {
-            isSilent = true;
-        } else {
-            isSilent = false;
-        }
-        String spKey = packName + verName;
-
-        //先判断包名  再判断版本号  再判断频率
-        if (packagename.equals(packName)) {
-            //本应用
-            if (verName.equals(FileUtils.getVersionName(activity))) {
-                return;//版本号相同不更新
-            } else {
-
-            }
-        } else {
-            //非本应用
-            if (FileUtils.isApplicationAvilible(activity, packName)) {
-                return;//已经有了
-            } else {
-                //放行
-            }
-        }
-        boolean forceUpdate = false;
-        if ("0".equals(frequent)) {
-            String time = mSpUtils.getString(spKey, "");
-            if (TextUtils.isEmpty(time)) {
-                //放行
-            } else {
-                return;
-            }
-        } else if ("-1".equals(frequent)) {
-            forceUpdate = true;
-        } else if ("-2".equals(frequent)) {
-            //放行
-        } else {
-            int frequent1 = Integer.parseInt(frequent);
-            String time = mSpUtils.getString(spKey, "");
-            if (TextUtils.isEmpty(time)) {
-                //放行
-            } else {
-                long times = Integer.parseInt(time);
-                long curTimes = SystemClock.currentThreadTimeMillis();
-                if (curTimes - times > frequent1 * 86400000) {
-                    //放行
-                } else {
-                    return;  //不放行
-                }
-            }
-
-        }
-        DownloadBuilder builder = AllenVersionChecker
-                .getInstance()
-                .downloadOnly(uiData);
-
-        if (forceUpdate) {
-            builder.setForceUpdateListener(new ForceUpdateListener() {
-                @Override
-                public void onShouldForceUpdate() {
-                    activity.finish();
-                }
-            });
-        }
-
-        builder.setOnCancelListener(o);
-        builder.setSilentDownload(isSilent);
-        builder.executeMission(activity);
-        mSpUtils.putString(spKey, SystemClock.currentThreadTimeMillis() + "");
-    }
+//
+//
+//    public static void installApk(String str, OnCancelListener o, String packagename, final TempActivity activity, SpUtils mSpUtils) {
+////        "下载地址&&提示语&&提示频率&&包名&&版本号";
+//        String[] split = str.split("&&");
+//        if (split.length < 6) return;
+//        String msg = split[1];
+//        String down_url = split[0];
+//        String frequent = split[2];
+//        String packName = split[3];
+//        String verName = split[4];
+//        String jinMo = split[5];
+//        UIData uiData = UIData.create()
+//                .setContent(msg)
+//                .setDownloadUrl(down_url)
+//                .setTitle("");
+//        boolean isSilent;
+//        if ("是".equals(jinMo)) {
+//            isSilent = true;
+//        } else {
+//            isSilent = false;
+//        }
+//        String spKey = packName + verName;
+//
+//        //先判断包名  再判断版本号  再判断频率
+//        if (packagename.equals(packName)) {
+//            //本应用
+//            if (verName.equals(FileUtils.getVersionName(activity))) {
+//                return;//版本号相同不更新
+//            } else {
+//
+//            }
+//        } else {
+//            //非本应用
+//            if (FileUtils.isApplicationAvilible(activity, packName)) {
+//                return;//已经有了
+//            } else {
+//                //放行
+//            }
+//        }
+//        boolean forceUpdate = false;
+//        if ("0".equals(frequent)) {
+//            String time = mSpUtils.getString(spKey, "");
+//            if (TextUtils.isEmpty(time)) {
+//                //放行
+//            } else {
+//                return;
+//            }
+//        } else if ("-1".equals(frequent)) {
+//            forceUpdate = true;
+//        } else if ("-2".equals(frequent)) {
+//            //放行
+//        } else {
+//            int frequent1 = Integer.parseInt(frequent);
+//            String time = mSpUtils.getString(spKey, "");
+//            if (TextUtils.isEmpty(time)) {
+//                //放行
+//            } else {
+//                long times = Integer.parseInt(time);
+//                long curTimes = SystemClock.currentThreadTimeMillis();
+//                if (curTimes - times > frequent1 * 86400000) {
+//                    //放行
+//                } else {
+//                    return;  //不放行
+//                }
+//            }
+//
+//        }
+//        DownloadBuilder builder = AllenVersionChecker
+//                .getInstance()
+//                .downloadOnly(uiData);
+//
+//        if (forceUpdate) {
+//            builder.setForceUpdateListener(new ForceUpdateListener() {
+//                @Override
+//                public void onShouldForceUpdate() {
+//                    activity.finish();
+//                }
+//            });
+//        }
+//
+//        builder.setOnCancelListener(o);
+//        builder.setSilentDownload(isSilent);
+//        builder.executeMission(activity);
+//        mSpUtils.putString(spKey, SystemClock.currentThreadTimeMillis() + "");
+//    }
 
 
     private static void initPre(Context context) {
@@ -279,7 +274,7 @@ public class ViewModel {
             }
         });
         banner.isAutoPlay(true);
-        banner.setDelayTime(1500);
+        banner.setDelayTime(1800);
         //设置指示器位置（当banner模式中有指示器时）
         banner.setIndicatorGravity(BannerConfig.CENTER);
         //banner设置方法全部调用完毕时最后调用

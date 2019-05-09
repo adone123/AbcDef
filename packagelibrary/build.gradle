@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:27.0.2'
+//    implementation 'com.android.support:appcompat-v7:27.0.2'
     implementation 'com.zhy:okhttputils:2.6.2'
     implementation 'com.google.code.gson:gson:2.2.4'
 //    implementation 'com.github.bumptech.glide:glide:3.7.0'
@@ -29,9 +29,9 @@ dependencies {
     implementation('com.yanzhenjie:permission:2.0.0-rc10') {
         exclude group: 'com.android.support'
     }
-    implementation('com.allenliu.versionchecklib:library:2.1.6') {
-        exclude group: "com.android.support"
-    }
+//    implementation('com.allenliu.versionchecklib:library:2.1.6') {
+//        exclude group: "com.android.support"
+//    }
     implementation('com.github.luoshihai:XXRecyclerView:v1.2.8') {
         exclude group: "com.android.support"
     }
