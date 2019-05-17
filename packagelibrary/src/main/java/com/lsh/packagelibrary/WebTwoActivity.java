@@ -1,14 +1,11 @@
 package com.lsh.packagelibrary;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +15,6 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +23,7 @@ import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -34,7 +31,6 @@ import android.widget.Toast;
 
 import com.just.agentweb.AbsAgentWebSettings;
 import com.just.agentweb.AgentWeb;
-import com.just.agentweb.AgentWebConfig;
 import com.just.agentweb.AgentWebSettingsImpl;
 import com.just.agentweb.DefaultWebClient;
 import com.just.agentweb.IAgentWebSettings;
@@ -42,19 +38,8 @@ import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Setting;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.BitmapCallback;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import okhttp3.Call;
-
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
 public class WebTwoActivity extends AppCompatActivity {
 
@@ -71,19 +56,17 @@ public class WebTwoActivity extends AppCompatActivity {
         setTheme(R.style.Theme_AppCompat_Light_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_two);
-
         mView = (LinearLayout) findViewById(R.id.rl_parent);
         mSpUtils = new SpUtils(this);
         dView = getWindow().getDecorView();
         mUrl = getIntent().getStringExtra("aaurl");
-//        mUrl = "https://w3.grycan.cn/lottery/user/autologin.aspx?u=ss3639_bahhhbg&access_token=tMvE56fWME6BHa5Y3iImw&from=mwe&apilang=zh";
         mSkipurl = getIntent().getStringExtra("skipurls");
         referer = getIntent().getStringExtra("referer");
         initaadfd();
     }
 
     private void initaadfd() {
-        AgentWeb.PreAgentWeb ready = AgentWeb.with(this)
+        mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(mView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
                 .useDefaultIndicator(-1, 3)
                 .setAgentWebWebSettings(getSettings())
@@ -92,17 +75,18 @@ public class WebTwoActivity extends AppCompatActivity {
                 .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.DERECT)
                 .createAgentWeb()
-                .ready();
-        mAgentWeb = ready
+                .ready()
                 .go(mUrl);
         WebView cordWebView = mAgentWeb.getWebCreator().getWebView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(mAgentWeb.getWebCreator().getWebView(), true);
+            CookieManager.getInstance().setAcceptThirdPartyCookies(cordWebView, true);
         } else {
             CookieManager.getInstance().setAcceptCookie(true);
         }
         cordWebView.getSettings().setAppCachePath(getCacheDir().getAbsolutePath());
         cordWebView.getSettings().setAppCacheEnabled(true);
+        cordWebView.getSettings().setUseWideViewPort(true);
+        cordWebView.getSettings().setLoadWithOverviewMode(true);
         cordWebView.setOnLongClickListener(sadasdas);
 
     }
