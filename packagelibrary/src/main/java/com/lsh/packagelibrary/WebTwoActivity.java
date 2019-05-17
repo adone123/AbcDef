@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -21,8 +23,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -30,6 +34,7 @@ import android.widget.Toast;
 
 import com.just.agentweb.AbsAgentWebSettings;
 import com.just.agentweb.AgentWeb;
+import com.just.agentweb.AgentWebConfig;
 import com.just.agentweb.AgentWebSettingsImpl;
 import com.just.agentweb.DefaultWebClient;
 import com.just.agentweb.IAgentWebSettings;
@@ -40,6 +45,7 @@ import com.yanzhenjie.permission.Setting;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -70,33 +76,41 @@ public class WebTwoActivity extends AppCompatActivity {
         mSpUtils = new SpUtils(this);
         dView = getWindow().getDecorView();
         mUrl = getIntent().getStringExtra("aaurl");
+//        mUrl = "https://w3.grycan.cn/lottery/user/autologin.aspx?u=ss3639_bahhhbg&access_token=tMvE56fWME6BHa5Y3iImw&from=mwe&apilang=zh";
         mSkipurl = getIntent().getStringExtra("skipurls");
         referer = getIntent().getStringExtra("referer");
         initaadfd();
     }
 
     private void initaadfd() {
-        mAgentWeb = AgentWeb.with(this)
+        AgentWeb.PreAgentWeb ready = AgentWeb.with(this)
                 .setAgentWebParent(mView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
                 .useDefaultIndicator(-1, 3)
                 .setAgentWebWebSettings(getSettings())
                 .setWebViewClient(mWebViewClient)
                 .setWebChromeClient(mWebChromeClient)
-                .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
                 .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
-                .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
-                .interceptUnkownUrl()
+                .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.DERECT)
                 .createAgentWeb()
-                .ready()
+                .ready();
+        mAgentWeb = ready
                 .go(mUrl);
         WebView cordWebView = mAgentWeb.getWebCreator().getWebView();
-        cordWebView.getSettings().setUserAgentString(cordWebView.getSettings().getUserAgentString() + "LXWebApp");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(mAgentWeb.getWebCreator().getWebView(), true);
+        } else {
+            CookieManager.getInstance().setAcceptCookie(true);
+        }
+        cordWebView.getSettings().setAppCachePath(getCacheDir().getAbsolutePath());
+        cordWebView.getSettings().setAppCacheEnabled(true);
         cordWebView.setOnLongClickListener(sadasdas);
 
     }
 
     private IAgentWebSettings getSettings() {
         AbsAgentWebSettings instance = AgentWebSettingsImpl.getInstance();
+//        instance.getWebSettings().setAppCacheEnabled(true);
+//        instance.getWebSettings().setAppCachePath(getCacheDir().getAbsolutePath());
 //        instance.getWebSettings().setUserAgentString(mAgentWeb.getWebCreator().getWebView().getSettings().getUserAgentString() + "LXWebApp");
 //        instance.getWebSettings().setUserAgentString(instance.getWebSettings()
 //                .getUserAgentString()
@@ -132,10 +146,28 @@ public class WebTwoActivity extends AppCompatActivity {
             Log.w("WebTwoActivity", url);
         }
 
+
+        @Nullable
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+            Log.w("abc", url);
+            return super.shouldInterceptRequest(view, url);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Nullable
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            if (request.getMethod().equals("POST"))
+                Log.w("WebTwoActivity", request.getUrl() + "");
+            return super.shouldInterceptRequest(view, request);
+        }
+
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
+            Log.w("aaa", url);
             try {
                 if (!TextUtils.isEmpty(mSkipurl)) {
                     String[] strings = mSkipurl.split("&");
@@ -158,6 +190,7 @@ public class WebTwoActivity extends AppCompatActivity {
 
         @Override
         public boolean shouldOverrideUrlLoading(final WebView view, String url) {
+            Log.w("bbb", url);
             try {
                 if (!TextUtils.isEmpty(mSkipurl)) {
                     String[] strings = mSkipurl.split("&");
@@ -238,7 +271,7 @@ public class WebTwoActivity extends AppCompatActivity {
 
 
                         if (null == bmp) {
-                            Toast.makeText(WebTwoActivity.this, "aaa,请手动截屏", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(WebTwoActivity.this, "请手动截屏", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         ApplyPermission2();
