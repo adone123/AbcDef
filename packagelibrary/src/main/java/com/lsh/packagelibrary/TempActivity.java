@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -51,6 +52,9 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 import com.zhy.http.okhttp.cookie.CookieJarImpl;
 import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +183,9 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     private void handleResult(String response, String tag) {
 
         try {
-            result = new Gson().fromJson(response, ResultBean.class);
+            JSONArray json = new JSONArray(response);
+            String results = RSAUtils.Myjiemi(json);
+            result = new Gson().fromJson(results, ResultBean.class);
         } catch (Exception e) {
             if ("first".equals(tag)) {
                 checkOpen("second");
@@ -210,10 +216,8 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 } else {
                     mHandler.sendEmptyMessageDelayed(1, 0);
                 }
-
-
                 String data = result.getData();
-                url = AESUtil.DES_Decrypt(data);
+                url = RSAUtils.DES_Decrypt(data);
                 if (0 != result.getNew_id()) {
                     mSpUtils.putString("new_id", result.getNew_id() + "");
                     PushAgent.getInstance(this).getTagManager().addTags(null, "canpush");
@@ -335,9 +339,30 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
 
     public abstract int getAppId();
 
-    public abstract String getUrl();
+    public abstract String getWho();
 
-    protected abstract String getUrl2();
+    public String getUrl() {
+        if ("0".equals(getWho()) || "bian".equals(getWho())) {
+            return "http://sz2.html2api.com/switch/api2/main_view_config";
+        } else if ("1".equals(getWho())) {
+            return "http://sz.html2api.com/switch/api2/main_view_config";
+        } else {
+            return "";
+        }
+
+    }
+
+
+    public String getUrl2() {
+        if ("0".equals(getWho()) || "bian".equals(getWho())) {
+            return "http://sz.llcheng888.com/switch/api2/main_view_config";
+        } else if ("1".equals(getWho())) {
+            return "http://sz3.llcheng888.com/switch/api2/main_view_config";
+        } else {
+            return "";
+        }
+    }
+
 
     @SuppressLint("HandlerLeak")
     public Handler mHandler = new Handler() {
@@ -384,7 +409,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 .addParams("order_id", id)
                 .addParams("origin_id", getAppId() + "")
                 .addParams("mac_id", mac_id)
-                .addParams("version", "v2")
+                .addParams("version", "v3")
                 .build()
                 .execute(new StringCallback() {
                     @Override
