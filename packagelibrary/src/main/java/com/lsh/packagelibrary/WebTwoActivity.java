@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
@@ -23,7 +22,6 @@ import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -244,16 +242,7 @@ public class WebTwoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        // 获取屏幕
-//                        dView.destroyDrawingCache();
-//                        dView.setDrawingCacheEnabled(false);
-//                        dView.setDrawingCacheEnabled(true);
-//                        dView.buildDrawingCache();
-//
-//                        bmp = dView.getDrawingCache();
                         bmp = BitmapUtil.createBitmapFromView(dView);
-
-
                         if (null == bmp) {
                             Toast.makeText(WebTwoActivity.this, "请手动截屏", Toast.LENGTH_SHORT).show();
                             return;
@@ -286,7 +275,6 @@ public class WebTwoActivity extends AppCompatActivity {
                 .onGranted(new Action<List<String>>() {
                     @Override
                     public void onAction(List<String> data) {
-                        MediaStore.Images.Media.insertImage(getContentResolver(), bmp, "图片", "description");
                         try {
                             SavePic.saveImageToGallery(WebTwoActivity.this, bmp);
                         } catch (Exception e) {
@@ -295,7 +283,6 @@ public class WebTwoActivity extends AppCompatActivity {
                             return;
                         }
                         ShowJumpOtherApp();
-
                     }
                 })
                 .onDenied(new Action<List<String>>() {

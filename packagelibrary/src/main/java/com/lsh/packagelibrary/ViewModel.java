@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -331,5 +332,16 @@ public class ViewModel {
                 }
             }
         });
+    }
+
+    public static String get_first_open_time(SpUtils sp) {
+        String fisrt_open_time = sp.getString("fisrt_open_time", "");
+        if (!TextUtils.isEmpty(fisrt_open_time)) {
+            return fisrt_open_time;
+        } else {
+            String l = System.currentTimeMillis() + "";
+            sp.putString("fisrt_open_time", l);
+            return l;
+        }
     }
 }

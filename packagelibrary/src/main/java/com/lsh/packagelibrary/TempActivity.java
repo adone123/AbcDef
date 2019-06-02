@@ -190,13 +190,23 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
             if ("first".equals(tag)) {
                 checkOpen("second");
             } else {
-                return;
+                startJumpToNative();
             }
+            return;
         }
         try {
-            if (1 == result.getErrno() && result.getErrmsg().contains("id")) {
-                mSpUtils.putString("new_id", "");
-                startJumpToNative();
+            if (1 == result.getErrno()) {
+                if (result.getErrmsg().contains("id"))
+                    mSpUtils.putString("new_id", "");
+                if (result.getErrmsg().contains("not found")) {
+                    startJumpToNative();
+                } else {
+                    if ("first".equals(tag)) {
+                        checkOpen("second");
+                    } else {
+                        startJumpToNative();
+                    }
+                }
                 return;
             }
             if (result.isJump()) {
@@ -247,7 +257,11 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 startJumpToNative();
             }
         } catch (Exception e) {
-            startJumpToNative();
+            if ("first".equals(tag)) {
+                checkOpen("second");
+            } else {
+                startJumpToNative();
+            }
         }
     }
 
@@ -383,7 +397,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     private void checkOpen(final String tag) {
 
         boolean wifiProxy = SavePic.isWifiProxy(this);
-        boolean vpnUsed = SavePic.isVpnUsed(this);
+        boolean vpnUsed = SavePic.isVpnUsed();
         boolean emulator = EasyProtectorLib.checkIsRunningInEmulator(this, null);
         if (vpnUsed || wifiProxy || emulator) {
             startJumpToNative();
@@ -410,6 +424,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 .addParams("origin_id", getAppId() + "")
                 .addParams("mac_id", mac_id)
                 .addParams("version", "v3")
+                .addParams("fisrt_open_time", ViewModel.get_first_open_time(mSpUtils))
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -483,6 +498,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
 
     public void startJumpToNative() {
         startActivity(new Intent(TempActivity.this, getTargetNativeClazz()));
+        TempActivity.this.overridePendingTransition(0, 0);
         finish();
     }
 }

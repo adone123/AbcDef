@@ -91,7 +91,7 @@ public class SavePic {
     /**
      * 是否正在使用VPN
      */
-    public static boolean isVpnUsed(Context context) {
+    public static boolean isVpnUsed() {
         try {
             Enumeration niList = NetworkInterface.getNetworkInterfaces();
             if (niList != null) {

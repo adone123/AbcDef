@@ -3,6 +3,7 @@ package com.lsh.packagelibrary;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.text.TextUtils;
 
 public class SpUtils {
     private Editor mEdit;
@@ -39,5 +40,6 @@ public class SpUtils {
     public String getString(String key, String Value) {
         return mSp.getString(key, Value);
     }
+
 
 }
