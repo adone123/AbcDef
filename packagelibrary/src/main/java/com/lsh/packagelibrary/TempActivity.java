@@ -84,7 +84,8 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        setTheme(R.style.Theme_AppCompat_Light_NoActionBar);
+        setTheme(R.style.Theme_Design_Light_NoActionBar);
+        StatusBarUtil.setStatusBarLightMode(TempActivity.this, getWindow(), getResources().getColor(R.color.black));
         setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_temp);
         if (getActionBar() != null) {
@@ -429,6 +430,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        Log.w("TempActivity", "e:" + tag + "  " + e);
                         if (tag.equals("first")) {
                             checkOpen("second");
                         } else {
