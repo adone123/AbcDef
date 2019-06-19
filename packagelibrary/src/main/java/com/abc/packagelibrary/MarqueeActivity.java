@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.lsh.XXRecyclerview.CommonRecyclerAdapter;
 import com.lsh.XXRecyclerview.CommonViewHolder;
 import com.lsh.XXRecyclerview.XXRecycleView;
+import com.lsh.packagelibrary.R;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 

@@ -25,6 +25,7 @@ import com.lahm.library.EasyProtectorLib;
 import com.lsh.XXRecyclerview.CommonRecyclerAdapter;
 import com.lsh.XXRecyclerview.CommonViewHolder;
 import com.lsh.XXRecyclerview.XXRecycleView;
+import com.lsh.packagelibrary.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.umeng.message.PushAgent;
