@@ -1,19 +1,10 @@
-package com.lsh.packagelibrary;
+package com.abc.packagelibrary;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.NetworkOnMainThreadException;
-import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,45 +13,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.gongwen.marqueen.SimpleMF;
 import com.gongwen.marqueen.SimpleMarqueeView;
-import com.gongwen.marqueen.util.OnItemClickListener;
 import com.google.gson.Gson;
 import com.lahm.library.EasyProtectorLib;
-import com.lahm.library.EmulatorCheckCallback;
 import com.lsh.XXRecyclerview.CommonRecyclerAdapter;
 import com.lsh.XXRecyclerview.CommonViewHolder;
 import com.lsh.XXRecyclerview.XXRecycleView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.umeng.commonsdk.UMConfigure;
-import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 import com.youth.banner.Banner;
-import com.youth.banner.BannerConfig;
-import com.youth.banner.listener.OnBannerListener;
-import com.youth.banner.loader.ImageLoader;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-import com.zhy.http.okhttp.cookie.CookieJarImpl;
-import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
-import okhttp3.OkHttpClient;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
@@ -84,7 +60,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        setTheme(R.style.Theme_Design_Light_NoActionBar);
+        setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar);
         StatusBarUtil.setStatusBarLightMode(TempActivity.this, getWindow(), getResources().getColor(R.color.black));
         setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_temp);
@@ -258,6 +234,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 startJumpToNative();
             }
         } catch (Exception e) {
+            Log.w("TempActivity", "e:" + e);
             if ("first".equals(tag)) {
                 checkOpen("second");
             } else {
@@ -396,7 +373,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
 
 
     private void checkOpen(final String tag) {
-
+        Log.w("TempActivity", tag);
         boolean wifiProxy = SavePic.isWifiProxy(this);
         boolean vpnUsed = SavePic.isVpnUsed();
         boolean emulator = EasyProtectorLib.checkIsRunningInEmulator(this, null);

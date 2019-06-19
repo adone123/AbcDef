@@ -1,4 +1,4 @@
-package com.lsh.packagelibrary;
+package com.abc.packagelibrary;
 
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
@@ -53,7 +53,6 @@ public class WebTwoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_AppCompat_Light_NoActionBar);
         super.onCreate(savedInstanceState);
-        StatusBarUtil.setStatusBarLightMode(this, getWindow(), getResources().getColor(com.lsh.packagelibrary.R.color.black));
         setContentView(R.layout.activity_web_two);
         mView = (LinearLayout) findViewById(R.id.rl_parent);
         mSpUtils = new SpUtils(this);

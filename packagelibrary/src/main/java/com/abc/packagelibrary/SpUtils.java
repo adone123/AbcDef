@@ -1,9 +1,8 @@
-package com.lsh.packagelibrary;
+package com.abc.packagelibrary;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.text.TextUtils;
 
 public class SpUtils {
     private Editor mEdit;

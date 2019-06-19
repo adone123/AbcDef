@@ -1,19 +1,12 @@
-package com.lsh.packagelibrary;
+package com.abc.packagelibrary;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.ColorInt;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
 
 import java.io.File;
 import java.util.List;

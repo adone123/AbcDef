@@ -1,4 +1,4 @@
-package com.lsh.packagelibrary;
+package com.abc.packagelibrary;
 
 import android.app.Activity;
 import android.os.Build;
@@ -119,7 +119,7 @@ public class StatusBarUtil {
             try {
                 int darkModeFlag = 0;
                 Class layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
-                Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+                Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_Light_MODE");
                 darkModeFlag = field.getInt(layoutParams);
                 Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
                 if (dark) {

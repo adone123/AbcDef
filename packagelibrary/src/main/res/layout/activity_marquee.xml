@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/beij"
     android:orientation="vertical"
-    tools:context=".MarqueeActivity">
+    tools:context="com.lsh.packagelibrary.com.abc.packagelibrary.MarqueeActivity">
     <LinearLayout
         android:orientation="vertical"
         android:layout_gravity="center_horizontal"

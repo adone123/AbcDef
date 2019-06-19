@@ -1,6 +1,4 @@
-package com.lsh.packagelibrary;
-
-import android.support.annotation.NonNull;
+package com.abc.packagelibrary;
 
 import java.util.List;
 
