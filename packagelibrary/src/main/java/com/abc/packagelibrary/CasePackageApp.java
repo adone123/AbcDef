@@ -21,8 +21,8 @@ public class CasePackageApp extends Application {
         CookieJarImpl cookieJar = new CookieJarImpl(new PersistentCookieStore(getApplicationContext()));
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(cookieJar)
-                .readTimeout(2, TimeUnit.SECONDS)
-                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(4, TimeUnit.SECONDS)
+                .connectTimeout(4, TimeUnit.SECONDS)
                 //其他配置
                 .build();
         OkHttpUtils.initClient(okHttpClient);
