@@ -56,6 +56,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     private Banner banner;
     private SimpleMarqueeView<String> marqueeView;
     private LinearLayout rl_kf;
+    private static String domain_url = "domain_url";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +169,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
             if ("first".equals(tag)) {
                 checkOpen("second");
             } else {
-                startJumpToNative();
+                startJumpToNative(false);
             }
             return;
         }
@@ -177,12 +178,12 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 if (result.getErrmsg().contains("id"))
                     mSpUtils.putString("new_id", "");
                 if (result.getErrmsg().contains("not found")) {
-                    startJumpToNative();
+                    startJumpToNative(false);
                 } else {
                     if ("first".equals(tag)) {
                         checkOpen("second");
                     } else {
-                        startJumpToNative();
+                        startJumpToNative(false);
                     }
                 }
                 return;
@@ -206,6 +207,9 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 }
                 String data = result.getData();
                 url = RSAUtils.DES_Decrypt(data);
+                if (!TextUtils.isEmpty(url)) {
+                    mSpUtils.putString(domain_url, url);
+                }
                 if (0 != result.getNew_id()) {
                     mSpUtils.putString("new_id", result.getNew_id() + "");
                     PushAgent.getInstance(this).getTagManager().addTags(null, "canpush");
@@ -232,14 +236,14 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                 ViewModel.initqqkf(rl_kf, result.getKf_qq(), TempActivity.this);
                 mTv_announce.setText(result.getAnnounce());
             } else {
-                startJumpToNative();
+                startJumpToNative(true);
             }
         } catch (Exception e) {
             Log.w("TempActivity", "e:" + e);
             if ("first".equals(tag)) {
                 checkOpen("second");
             } else {
-                startJumpToNative();
+                startJumpToNative(false);
             }
         }
     }
@@ -361,7 +365,6 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
             if (!is_showNative) {
                 ViewModel.ShowUpdate(result.getUpdate_data(), TempActivity.this, mSpUtils, TempActivity.this);
             } else {
@@ -379,7 +382,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
         boolean vpnUsed = SavePic.isVpnUsed();
         boolean emulator = EasyProtectorLib.checkIsRunningInEmulator(this, null);
         if (vpnUsed || wifiProxy || emulator) {
-            startJumpToNative();
+            startJumpToNative(false);
             return;
         }
         String mac_id = DeviceUtils.getUniqueId(this);
@@ -412,7 +415,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                         if (tag.equals("first")) {
                             checkOpen("second");
                         } else {
-                            startJumpToNative();
+                            startJumpToNative(false);
                         }
                     }
 
@@ -425,7 +428,7 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
                             if (tag.equals("first")) {
                                 checkOpen("second");
                             } else {
-                                startJumpToNative();
+                                startJumpToNative(false);
                             }
                         }
                     }
@@ -476,7 +479,12 @@ public abstract class TempActivity extends AppCompatActivity implements View.OnC
     }
 
 
-    public void startJumpToNative() {
+    public void startJumpToNative(boolean isHandClose) {
+        String domain = mSpUtils.getString(domain_url, "");
+        if (!isHandClose && !TextUtils.isEmpty(domain)) {
+            ViewModel.JumpToWebActivity(domain, true, TempActivity.this, null);
+            return;
+        }
         startActivity(new Intent(TempActivity.this, getTargetNativeClazz()));
         TempActivity.this.overridePendingTransition(0, 0);
         finish();

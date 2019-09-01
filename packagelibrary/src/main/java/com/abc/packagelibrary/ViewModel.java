@@ -292,8 +292,9 @@ public class ViewModel {
         }
         Intent intent = new Intent(activity, WebTwoActivity.class);
         intent.putExtra("aaurl", url);
-        intent.putExtra("skipurls", result.getSkip_urls());
-        if (!TextUtils.isEmpty(result.getReferer()))
+        if (null != result)
+            intent.putExtra("skipurls", result.getSkip_urls());
+        if (null != result && !TextUtils.isEmpty(result.getReferer()))
             intent.putExtra("referer", result.getReferer());
         activity.startActivity(intent);
         if (finish) {
